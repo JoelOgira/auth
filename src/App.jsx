@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import ClockApp from "./timer/ClockApp";
+import Register from "./Auth/Register";
 
 const App = () => {
   return (
@@ -7,6 +8,7 @@ const App = () => {
       <div className="px-5 container mx-auto md:w-1/2">
         <Routes>
           <Route path="/clock" element={<ClockApp />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </div>
     </div>
