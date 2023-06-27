@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useRef, useEffect } from "react";
-import { FaCheck, FaTimes, FaInfoCircle} from "react-icons/fa";
+import { FaCheck, FaTimes, FaInfoCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import axios from "../api/axios";
 
@@ -23,7 +23,7 @@ const Register = () => {
     const [ errMsg, setErrMsg ] = useState('');
     const [ success, setSuccess ] = useState('');
 
-    const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
+    const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
     const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
     const REGISTER_URL = '/register';
 
@@ -53,6 +53,7 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        // If button is enabled with JS hack 
         const v1 = USER_REGEX.test(user);
         const v2 = PWD_REGEX.test(pwd);
         if (!v1 || !v2) {
@@ -61,12 +62,14 @@ const Register = () => {
         }
         try {
             const res = await axios.post(REGISTER_URL,
-                JSON.stringify({ user, pwd }), 
+                JSON.stringify({ user, pwd }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
                 }
             )
+            setSuccess(true);
+
             console.log(res.data);
             console.log(res.accessToken);
             console.log(JSON.stringify(res));
@@ -74,14 +77,13 @@ const Register = () => {
             setUser('');
             setPwd('');
             setMatchPwd('');
-            setSuccess(true);
         } catch (err) {
             if (!err?.response) {
                 setErrMsg('No Server Response');
             } else if (err.response?.status === 409) {
-                setErrMsg('Username Taken')
+                setErrMsg('Username Taken');
             } else {
-                setErrMsg('Registration failed');
+                setErrMsg('Registration Failed')
             }
             errRef.current.focus();
         }
@@ -89,7 +91,7 @@ const Register = () => {
 
     return (
         <div className="flex flex-col justify-center items-center pt-20">
-            <div className="bg-blue-950 shadow-lg p-4 text-white w-full lg:w-1/2">
+            <div className="bg-blue-950 rounded-md shadow-lg p-4 text-white w-3/4 lg:w-1/2">
                 {success ?
                     <div>
                         <p className="py-2">Success</p>
@@ -98,7 +100,13 @@ const Register = () => {
                         </Link>
                     </div>
                     : <>
-                        <p ref={errRef} aria-live="assertive" className={`(${errMsg} block ?  absolute left-[-9999px] ) border text-center py-2 font-semibold text-red-600 rounded bg-white mb-3`}>{errMsg}</p>
+                        <p
+                            ref={errRef}
+                            aria-live="assertive"
+                            className={errMsg ? "border-none text-center py-2 font-semibold text-red-600 rounded bg-red-200 mb-3" : "absolute left-[-9999px]"}
+                        >
+                            {errMsg}
+                        </p>
                         <h1 className="text-2xl font-bold pb-3">Register</h1>
                         <form onSubmit={handleSubmit} className="flex flex-col">
                             <div className="mb-5">
@@ -117,6 +125,7 @@ const Register = () => {
                                     id="username"
                                     ref={userRef}
                                     autoComplete="off"
+                                    value={user}
                                     onChange={(e) => setUser(e.target.value)}
                                     required
                                     aria-invalid={validName ? false : true}
@@ -145,6 +154,7 @@ const Register = () => {
                                     type="password"
                                     className="w-full rounded p-2 text-black focus:outline-none"
                                     id="password"
+                                    value={pwd}
                                     onChange={(e) => setPwd(e.target.value)}
                                     required
                                     aria-invalid={validPwd ? false : true}
@@ -173,6 +183,7 @@ const Register = () => {
                                     type="password"
                                     className="w-full rounded p-2 text-black focus:outline-none"
                                     id="Confirm_Password"
+                                    value={matchPwd}
                                     onChange={(e) => setMatchPwd(e.target.value)}
                                     required
                                     aria-invalid={validMatch ? false : true}
@@ -186,16 +197,16 @@ const Register = () => {
                             </div>
 
                             <button
-                                className="mb-5 border rounded bg-white text-blue-950 py-3 font-semibold my-3"
+                                className={!validName || !validPwd || !validMatch ? "w-full mb-5 border rounded bg-blue-200 text-blue-950 py-3 font-semibold my-3" : "w-full mb-5 border rounded bg-white text-blue-950 py-3 font-semibold my-3"}
                                 disabled={!validName || !validPwd || !validMatch ? true : false}
                             >
-                                Sign In
+                                Sign Up
                             </button>
                         </form>
 
                         <div>
-                            <p className="py-2">Already Registered?</p>
-                            <Link path='/signin' className="underline">
+                            <p className="py-2">Already have an Account?</p>
+                            <Link to='/login' className="underline">
                                 Sign In
                             </Link>
                         </div>
