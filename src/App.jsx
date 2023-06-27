@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import ClockApp from "./timer/ClockApp";
 import Register from "./Auth/Register";
+import Login from "./Auth/Login";
 
 const App = () => {
   return (
@@ -9,6 +10,7 @@ const App = () => {
         <Routes>
           <Route path="/clock" element={<ClockApp />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </div>
